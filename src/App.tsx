@@ -22,6 +22,7 @@ function App() {
   }, [isControlPressed, isEPressed]); // Only re-run the effect if pressedKey changes 
   
   useEffect(() => {
+    //set focus on textarea when noteActive is true
     if(textareaRef.current && noteActive){
       textareaRef.current.focus();
     }
