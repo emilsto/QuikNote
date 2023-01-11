@@ -1,33 +1,44 @@
-import React from 'react';
-import { useState, useEffect } from "react";
-import logo from './logo.svg';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 import useKeyPress from './hooks/useKeyPress';
+
+const postNote = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  console.log('Note saved ✅');
+}
+
 
 function App() {
   const [noteActive, setNoteActive] = useState<boolean>(false);
   const isControlPressed: boolean = useKeyPress("Control");
   const isEPressed: boolean = useKeyPress("e");
-
-
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    console.log("isControlEPressed");
     if (isControlPressed && isEPressed) {
       setNoteActive(!noteActive);
     }
-  }, [isControlPressed, isEPressed]);
+  }, [isControlPressed, isEPressed]); // Only re-run the effect if pressedKey changes 
+  
+  useEffect(() => {
+    if(textareaRef.current && noteActive){
+      textareaRef.current.focus();
+    }
 
-
+  }, [noteActive]);
+  
   return (
     <div className="App">
       <header className="App-header">
         <p>
           Welcome to QuikNote!
         </p>
-        <p>Press Ctrl + e to jot down a note</p>
-        {noteActive && <textarea />}
+        {!noteActive && <p>Press Ctrl + E to start taking notes</p>}
+        {noteActive && <p>Press Ctrl + E to stop taking notes</p>}
+        {noteActive && <form onSubmit={postNote}> <textarea ref={textareaRef} placeholder='Once finished taking the note, hit enter to save!'/>
+        <button type='submit'>Save</button> 
+        </form>}
       </header>
     </div>
   );
